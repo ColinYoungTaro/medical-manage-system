@@ -54,7 +54,7 @@
         }
       },
       methods: {
-        delete_patiens(subject_id){
+        delete_patient(subject_id){
           id = parseInt(subject_id)         
           axios.post('http://localhost:5000/del-patient', {
               "data":id
