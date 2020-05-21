@@ -11,7 +11,6 @@ from flask_script import Manager,Command,Shell
 from sqlalchemy import func
 from flask_migrate import Migrate,MigrateCommand
 
-from watchlist.models import db
 # from app import app
 from watchlist import models as data
 from watchlist.models import db
