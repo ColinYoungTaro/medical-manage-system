@@ -1,7 +1,7 @@
 from flask import request, render_template, redirect, flash, url_for, jsonify
 from flask_login import login_required
 from flask_login import login_user, logout_user,current_user
-
+from .models import Role
 from . import main
 from .models import db, User, permission_required, Auth, AnoymousUser
 from . import models as data
@@ -34,9 +34,7 @@ def login():
 @login_required
 @permission_required(Auth.READ)
 def data_events():
-    events = data.LabEvent.query.limit(1000)
-    events = list(events)
-    events.sort(key = lambda x : x.charttime , reverse = True)
+    events = data.LabEvent.query.order_by(db.desc(data.LabEvent.charttime)).limit(1000)
     return render_template('dataevents.html',events = events)
 
 @main.route('/success', methods=['GET', 'POST'])
@@ -64,7 +62,7 @@ def doc_register():
             if (res):
                 print("username has exist")
                 return redirect(url_for('main.index'))
-        user = User(Email=email, name=name,permission=7)
+        user = User(Email=email, name=name,role_id=14)
         user.password = pwd
         print(user)
         db.session.add(user)
@@ -77,11 +75,12 @@ def patients(subject_id):
     ps = data.Patient.query.filter_by(subject_id=subject_id).all()
     return render_template("hello.html", name=subject_id)
 
-@permission_required(64)
-@main.route('/delete-patient')
+
+@main.route('/delete-patient',methods=['GET','POST'])
+@permission_required(Auth.DELETE)
 def delete_patient():
     if request.method == 'POST':
-        if not current_user.can(Auth.DELETE):
+        if current_user.can(Auth.DELETE):
             msg = ['成功删除病人','success']
             print("Execute")
             data = request.get_json()
@@ -89,6 +88,7 @@ def delete_patient():
         else:
             msg = ['删除失败','danger']
             print("FAIL")
+    return ""
 
 @main.route('/back-end-patients',methods=['POST','GET'])
 def be_patients():
@@ -227,9 +227,30 @@ def get_all_drug():
 def get_users():
     return data.User.query.all()
 
-@main.route('/user-list')
+
+@main.route('/user-list',methods=['GET','POST'])
+@permission_required(1)
 def user_list():
     userList = get_users()
+    if request.method == 'POST':
+        json_data = request.get_json()
+        if json_data['func'] == 'alter':
+            role_name = json_data['data']
+            user_id = json_data['alter_user_id']
+            role = Role.query.filter_by(name=role_name).first()
+            id = role.id
+            if user_id != 8 and current_user.can(Auth.ADMIN):
+                # 测试用管理员id为8，不能删除
+                user = data.User.query.filter_by(id=user_id).first()
+                user.role_id = id
+                db.session.commit()
+        elif json_data['func'] == 'delete':
+            if current_user.can(Auth.ADMIN):
+                user_id = json_data['user_id']
+                user = data.User.query.filter_by(id=user_id).first()
+                print(user)
+                # db.session.delete(user)
+                # db.session.commit()
     return render_template('users.html',user_list = userList)
 
 
@@ -248,7 +269,5 @@ def query_prescription(subject_id):
     return jsonify(lst)
 
 
-@main.route('/ev',methods=['GET','POST'])
-def ev():
-    lst = data.DataTimeEvent.query.limit(100)
-    return jsonify(mk_list(lst))
+
+

@@ -2,6 +2,7 @@ from flask_login import UserMixin,AnonymousUserMixin,current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_sqlalchemy import SQLAlchemy
 from functools import wraps
+from flask import abort
 db = SQLAlchemy()
 
 class Auth:
@@ -185,6 +186,7 @@ class Role(db.Model):
             'admin': Auth.ADMIN
         }
         for r in roles:
+            print(r)
             role = Role.query.filter_by(name=r).first()
             if Role is None:
                 role = Role(name=r)
@@ -192,9 +194,6 @@ class Role(db.Model):
             db.session.add(role)
         db.session.commit()
 
-    def __init__(self,**kwargs):
-        for attr,var in kwargs.items():
-            self.__dict__[attr].name = var
 
 class User(db.Model,UserMixin):
     __tablename__ = "users"
@@ -202,13 +201,14 @@ class User(db.Model,UserMixin):
     Email = db.Column(db.String(50))
     permission = db.Column(db.Integer)
     role_id = db.Column(db.Integer,db.ForeignKey('roles.id'))
-    pwd  = db.Column(db.String(50))
+    pwd = db.Column(db.String(50))
     name = db.Column(db.String(30))
     password_hash = db.Column(db.String(128))
 
     def can(self,permissions):
-        return self.permission is not None and \
-                (self.permission & permissions) == permissions
+        print("CAN",self.role.permissions,permissions,self.role.permissions & permissions)
+        return self.role.permissions is not None and \
+                (self.role.permissions & permissions) == permissions
     @property
     def password(self):
         raise AttributeError('Not readable')
@@ -235,11 +235,12 @@ class AnoymousUser(AnonymousUserMixin):
 def permission_required(permisson):
     def decorator(f):
         @wraps(f)
-        def decoratred_function(*args,**kwargs):
+        def decorated_function(*args,**kwargs):
             if not current_user.can(permisson):
-                pass # abort
+                print("ABORT")
+                abort(403)
             return f(*args,**kwargs)
-        return decoratred_function
+        return decorated_function
     return decorator
 
 

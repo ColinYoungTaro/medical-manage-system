@@ -1,6 +1,7 @@
 from flask import Flask
 import os
 import sys
+
 sys.path.append('E:/DeskTopFiles/19-20/数据库/flask_proj/')
 sys.path.append('home/ZJUBME/DBsystem')
 
@@ -32,12 +33,24 @@ manager.add_command('db',MigrateCommand)
 
 
 def make_shell_context():
-    return dict(app=app,db=db,models=data)
+    return dict(app=app,db=db,models=data,insert=insert_roles)
 
 
 manager.add_command("Shell",Shell(make_context=make_shell_context))
 
-
+def insert_roles():
+    roles = {
+        'assistance' : data.Auth.READ,
+        'doctor' : (data.Auth.READ | data.Auth.UPDATE | data.Auth.ADD),
+        'admin': data.Auth.ADMIN
+    }
+    for r in roles:
+        role = data.Role()
+        role.name = r
+        print(roles[r])
+        role.permissions = roles[r]
+        db.session.add(role)
+    db.session.commit()
 
 
 

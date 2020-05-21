@@ -11,40 +11,103 @@
     <script src="https://cdn.staticfile.org/vue/2.4.2/vue.min.js"></script>
 </head>
 <body>
-    <table class="table table-striped table-hover">
-        <thead>
-            <tr>
-                <th>用户名称</th>
-                <th>联系邮箱</th>
-                <th>用户权限</th>
-                <th>操作</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in user_list %}
+    <div id="app">
+        <nav class="nav navbar bg-window w-100 d-flex flex-row">
+            <div id="left-logo" class="w-50">
+              <img src="../static/logo.png" alt="">
+            </div>
+            <div class="w-50 d-flex flex-row-reverse" id="right-title">
+              <div class="d-flex" style="flex-direction: column;">
+                <h3 style="color:white;font-weight: bold;" class="headline">职工后台管理</h3>
+                <ul class="nav w-100" style="flex-direction: row-reverse;">
+                    <a href="{{ url_for('main.index')}}" style="color:white;font-size: 20px;">返回</a>
+                </ul>
+             </div>
+            </div>
+          </nav>
+          <!-- 滚动的时候兼容 -->
+          <nav class="nav navbar bg-window w-100 d-flex fixed-top flex-row">
+            <div id="left-logo" class="w-50">
+              <img src="../static/logo.png" alt="">
+            </div>
+            <div class="w-50 d-flex flex-row-reverse" id="right-title">
+              <div class="d-flex" style="flex-direction: column;">
+                <h3 style="color:white;font-weight: bold;" class="headline">职工后台管理</h3>
+                <ul class="nav w-100" style="flex-direction: row-reverse;">
+                    <a href="{{ url_for('main.index')}}" style="color:white;font-size: 20px;">返回</a>
+                </ul>
+             </div>
+            </div>
+          </nav>
+        <table class="table table-striped table-hover">
+            <thead class="thead-dark">
                 <tr>
-                    <td>{{ user.name }}</td>
-                    <td>{{ user.role_id }}</td>
-                    <td>{{ user.permission }}</td>
-                    <td>
-                        <select id="" style="width:100px;">
-                            <option value=""></option>
-                            <option value="普通职员"></option>
-                        </select>
-                        <input type="button" class="btn btn-light btn-sm" value="授权">
-                    </td>
+                    <th>用户名称</th>
+                    <th>联系邮箱</th>
+                    <th>职位</th>
+                    <th>用户权限</th>
+                    <th>操作</th>
                 </tr>
-            {% endfor %}
-
-        </tbody>
-    </table>
-        
+            </thead>
+            <tbody>
+                {% for user in user_list %}
+                    <tr>
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.Email }}</td>
+                        <td>{{ user.role.name }}</td>
+                        <td>{{ user.role.permissions }}</td>
+                        <td>
+                            <select id="{{user.id}}" v-model="tmp_chosen['{{user.id}}']" style="width:100px;">
+                                <option value="assistance">临时工</option>
+                                <option value="doctor">正式医生</option>                            
+                                <option value="admin">管理员</option>
+                            </select>
+                            <input type="button" class="btn btn-light btn-sm" value="修改角色" @click="get_option('{{user.id}}')">
+                            <input type="button" class="btn btn-danger btn-sm" value="炒鱿鱼" @click="delete_user('{{user.id}}')">
+                        </td>
+                    </tr>
+                {% endfor %}
+    
+            </tbody>
+        </table>
+    </div>
+    
 </body>
 <script>
-    function getVal() {
-        console.log($('#auth').val());
-    }
     var vm = new Vue({
+        el: "#app",
+        data:{
+            tmp_chosen : {},
+        },
+        methods: {
+            get_option(id){
+                var role_id = this.tmp_chosen[id];
+                var user_id = parseInt(id)
+                console.log(role_id,user_id)
+                axios.post('./user-list',{
+                    "func" : "alter",
+                    "data" : role_id ,
+                    "alter_user_id" : user_id
+                }).then(function(response){
+                    location.reload()
+                }).catch(function(error){
+                    console.error(error)
+                    alert("权限不足")
+                })
+            },
+            delete_user(id){
+                var user_id = parseInt(id)
+                console.log(user_id)
+                axios.post('./user-list',{
+                    "func" : "delete",
+                    "user_id" : user_id
+                }).then(function(response){
+                }).catch(function(error){
+                    console.error(error)
+                    alert("权限不足")
+                })
+            }
+        },
         delimiters:['${','}']
     })
 </script>
