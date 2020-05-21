@@ -231,7 +231,6 @@ def get_users():
 @main.route('/user-list',methods=['GET','POST'])
 @permission_required(1)
 def user_list():
-
     if request.method == 'POST':
         json_data = request.get_json()
         if json_data['func'] == 'alter':
