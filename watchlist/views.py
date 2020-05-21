@@ -8,9 +8,6 @@ from . import models as data
 from sqlalchemy import func
 from .form import Login
 
-from .. import bootstrap
-
-
 
 
 @main.route('/login', methods=['GET', 'POST'])
