@@ -231,7 +231,7 @@ def get_users():
 @main.route('/user-list',methods=['GET','POST'])
 @permission_required(1)
 def user_list():
-    userList = get_users()
+
     if request.method == 'POST':
         json_data = request.get_json()
         if json_data['func'] == 'alter':
@@ -248,9 +248,9 @@ def user_list():
             if current_user.can(Auth.ADMIN):
                 user_id = json_data['user_id']
                 user = data.User.query.filter_by(id=user_id).first()
-                print(user)
-                # db.session.delete(user)
-                # db.session.commit()
+                db.session.delete(user)
+                db.session.commit()
+    userList = get_users()
     return render_template('users.html',user_list = userList)
 
 

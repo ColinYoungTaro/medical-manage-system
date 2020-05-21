@@ -104,6 +104,7 @@
                     "func" : "delete",
                     "user_id" : user_id
                 }).then(function(response){
+                    location.reload()
                 }).catch(function(error){
                     console.error(error)
                     alert("权限不足")
