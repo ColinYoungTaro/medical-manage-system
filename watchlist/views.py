@@ -37,8 +37,6 @@ def data_events():
     events = data.LabEvent.query.limit(1000)
     events = list(events)
     events.sort(key = lambda x : x.charttime , reverse = True)
-    for iter in events:
-        print(iter.subject_id)
     return render_template('dataevents.html',events = events)
 
 @main.route('/success', methods=['GET', 'POST'])
@@ -52,7 +50,6 @@ def hello():
 
 @main.route('/doc-register', methods=['GET', 'POST'])
 def doc_register():
-    print("waiting")
     if request.method == 'POST':
         email = request.form.get('Email')
         name = request.form.get('name')
@@ -67,7 +64,7 @@ def doc_register():
             if (res):
                 print("username has exist")
                 return redirect(url_for('main.index'))
-        user = User(Email=email, name=name)
+        user = User(Email=email, name=name,permission=7)
         user.password = pwd
         print(user)
         db.session.add(user)
@@ -78,14 +75,28 @@ def doc_register():
 @main.route('/patients/<int:subject_id>', methods=['GET'])
 def patients(subject_id):
     ps = data.Patient.query.filter_by(subject_id=subject_id).all()
-    print(ps)
     return render_template("hello.html", name=subject_id)
 
+@permission_required(64)
+@main.route('/delete-patient')
+def delete_patient():
+    if request.method == 'POST':
+        if not current_user.can(Auth.DELETE):
+            msg = ['成功删除病人','success']
+            print("Execute")
+            data = request.get_json()
+            delete_patient(data['data'])
+        else:
+            msg = ['删除失败','danger']
+            print("FAIL")
 
-@main.route('/back-end-patients')
+@main.route('/back-end-patients',methods=['POST','GET'])
 def be_patients():
+    msg = []
     return render_template('patients.html',patients=get_all_subject_id())
-
+@main.route('/get-auth')
+def get_auth():
+    return current_user.can()
 @main.route('/check-result')
 @login_required
 def main_interface():
@@ -110,18 +121,12 @@ def getSubjId():
     ids = data.Patient.query.group_by('subject_id').subject_id
 
 
-# 查询病人的所有处方信息
-# @main.route('/prescription/alter/<subject_id>')
-# normally the prescriptions are searched by patients through foreign keys
-
-
 
 @main.route('/cpts')
 @login_required
 @permission_required(Auth.ADMIN)
 def watchCPT():
     cpts = data.Cpt.query.all()
-
 
 @main.route('/logout')
 @login_required
@@ -187,22 +192,13 @@ def add_pres():
     return data
 
 def add_prescription(kwargs):
-    print(kwargs)
     pres_list = data.Prescription(kwargs)
     maxcnt = db.session.query(func.max(data.Prescription.row_id)).first()[0]
     maxcnt += 1
     pres_list.row_id = maxcnt
-    print(pres_list)
     db.session.add(pres_list)
     db.session.commit()
 
-
-@main.route('/del-patient',methods=['GET','POST'])
-def del_patient():
-    if request.method == 'POST':
-        data = request.get_json()
-        delete_patient(data['data'])
-    return ""
 
 def delete_patient(subject_id):
     record = data.Patient.query.get(subject_id)
@@ -213,8 +209,9 @@ def delete_patient(subject_id):
         print("Data not exist")
 
 
-
 def delete_prescription(row_id):
+    if not current_user.can(Auth.DELETE) :
+        flash('没有删除权限')
     prsc = data.Prescription.query.get(row_id)
     if(prsc):
         db.session.delete(prsc)
@@ -227,6 +224,14 @@ def get_all_drug():
     res = [iter[0] for iter in result]
     return res
 
+def get_users():
+    return data.User.query.all()
+
+@main.route('/user-list')
+def user_list():
+    userList = get_users()
+    return render_template('users.html',user_list = userList)
+
 
 @main.route('/get-pres/<int:subject_id>')
 def query_prescription(subject_id):
@@ -238,7 +243,6 @@ def query_prescription(subject_id):
         for k, v in row.__dict__.items():
             if not k.startswith('_sa_instance_state'):
                 dct[k] = v
-                print(dct[k])
         lst.append(dct)
     db.session.commit()
     return jsonify(lst)

@@ -19,7 +19,20 @@
         <img src="../static/logo.png" alt="">
       </div>
       <div class="w-50 d-flex flex-row-reverse" id="right-title">
-        <h3 style="color:white;font-weight: bold;" class="headline">登陆选项</h3>
+        <h3 style="color:white;font-weight: bold;" class="headline">登录选项</h3>
+        
+        <div class=" d-flex flex-row mb-2 mr-2">
+          <button class="btn btn-light btn-sm">
+            <a href="{{ url_for('main.login')}}" style="color:black">登录</a>
+          </button>
+          <button class="btn btn-light btn-sm ml-1">
+            <a href="{{ url_for('main.logout')}}" style="color:black">登出</a>
+          </button>          
+          <button class="btn btn-light btn-sm ml-1">
+              <a href="{{ url_for('main.doc_register')}}" style="color:black">注册</a>
+          </button>
+        </div>
+
       </div>
     </nav>
     <div class="d-flex flex-row">

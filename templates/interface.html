@@ -57,9 +57,11 @@
                             <tr v-for="(item, index) in patients" :key="index"
                                 :style="'background-color:'+ (parseInt(search_content) == item.subject_id?'yellow':'') +';'">
                                 <td>
-                                    <td :id="'sjid'+ item.subject_id ">病人号:
-                                        ${item.subject_id}
-                                    </td>
+                                    <a :href=" './' + item.subject_id ">
+                                        <span :id="'sjid'+ item.subject_id ">病人号:
+                                            ${item.subject_id}
+                                        </span>
+                                    </a>
                                 </td>
                             </tr>
                                 
@@ -72,6 +74,9 @@
                     <h6 style="color:white;padding-right:10px;padding-top: 10px;">欢迎您 {{ user.name }} 医生</h6>
                     <button class="btn btn-light btn-sm">
                         <a href="{{ url_for('main.logout')}}" style="color:black">登出</a>
+                    </button>
+                    <button class="btn btn-light btn-sm ml-1">
+                        <a href="{{ url_for('main.index')}}" style="color:black">返回</a>
                     </button>
                 </nav>
                 <div id="info">
@@ -278,7 +283,7 @@
                     presc_valid:false,
                     print_abnormal_only:false,
                     drugs:{},
-                    chosen_sub_id:21,
+                    chosen_sub_id:37,
                     doc_name:"Colin Young",
                     patients:null,
                     prescriptions:null,
@@ -290,9 +295,8 @@
                 
             },
             mounted() {
-                var router = "http://localhost:5000";
                 axios
-                .get('../get-pres/21')
+                .get('../get-pres/37')
                 .then(response => (this.prescriptions = response.data))
                 .catch(function (error) { // 请求失败处理
                     console.log(error);
@@ -303,7 +307,6 @@
                     console.log(error)
                 });
 
-                
             },
             methods: {
                 has_empty(record){
