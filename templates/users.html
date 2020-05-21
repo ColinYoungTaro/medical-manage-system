@@ -84,6 +84,8 @@
                 var role_id = this.tmp_chosen[id];
                 var user_id = parseInt(id)
                 console.log(role_id,user_id)
+                if(role_id == undefined || role_id == '' || role_id == null)
+                    return 
                 axios.post('./user-list',{
                     "func" : "alter",
                     "data" : role_id ,
