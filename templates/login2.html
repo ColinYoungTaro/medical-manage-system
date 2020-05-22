@@ -9,7 +9,13 @@
     {% endblock title %}
         
     {% block body%}
-        
+
+        {% for message in get_flashed_messages() %}
+        <div class="alert alert-danger fixed-top" style="margin: 0px;">
+            {{ message }}
+        </div>
+        {% endfor %}
+
         <div style="background-color:#17A2B8;padding:10px;display:flex;align-content: center; justify-content: center;">
             <div style="width: 50%; justify-content: center; align-content: center;">
                 <span style="color: white;font-size: large;">登陆界面</span>

@@ -79,13 +79,13 @@ def login():
         user = User.query.filter_by(Email=email).first()
         print(password, email, user)
         if not user:
-            flash('loginFailed')
+            flash(u'用户不存在')
         elif user.verify_password(password):
             print('login_success')
             login_user(user)
             return redirect(url_for('main.index'))
         else:
-            print("login_fail")
+            flash(u'密码错误','danger')
     return render_template('login2.html', form=login_form)
 
 
