@@ -7,6 +7,9 @@
     <title>注册页面</title>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha256-YLGeXaapI0/5IgZopewRJcFXomhRMlYYjugPLSyNjTY=" crossorigin="anonymous" />
+    <script src="https://cdn.staticfile.org/axios/0.18.0/axios.min.js"></script>
+    <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+
     <style>
         .centerize{
             display: flex;
@@ -31,22 +34,68 @@
         </div>
 
     </nav>
-    <div class="centerize">
-        <form method="post">
+    <div class="centerize" id="reg">
+        <form method="post" >
             <div class="border shadow p-4" style="border-radius: 10px;; margin: 20px 0; width:300px;justify-content: center;display:flex;flex-direction: column;">
                 <div>
-                    Email <input type="text" class="form-control " name="Email" autocomplete="off" required>
-                    name <input type="text" class="form-control" name="name" autocomplete="off" required>
-                    password <input type="password" class="form-control" name="pwd" autocomplete="off" required>
+                    Email <input type="text" v-model="Email" class="form-control " name="Email" autocomplete="off" required>
+                    name <input type="text" v-model="name" class="form-control" name="name" autocomplete="off" required>
+                    password <input type="password" v-model="password" class="form-control" name="pwd" autocomplete="off" required>
                     confirm_password
-                    <input type="password" class="form-control" name="cfm_pwd" autocomplete="off" required>
+                    <input type="password" v-model="confirm_password" class="form-control" name="cfm_pwd" autocomplete="off" required>
+                    <span style="font-size:15px;" :style="{color:tip_color}">${tip_msg}</span>
                 </div>
-                <button type="submit" class="btn btn-info mt-3 ml-3 mr-3">注册</button>
-            </div>
 
+                <input type="button" @click='validate' class="btn btn-info mt-3 ml-3 mr-3" value="注册">
+            </div>
         </form>
     </div>
-
+    <script>
+        var vm = new Vue({
+            delimiters :['${','}'],
+            el : "#reg",
+            data : {
+                tip_color :'red',
+                tip_msg : "",
+                Email : "",
+                name : "",
+                password : "",
+                confirm_password : ""
+            },
+            methods: {
+                validate(){
+                    if(this.Email== "" || this.name == "" || this.password=="" || this.confirm_password == ""){
+                        this.tip_msg = "请填写所有字段"
+                        return 
+                    }
+                    axios.post('../doc-register',{
+                        "email":this.Email,
+                        "name":this.name,
+                        "password" : this.password,
+                        "conform_password" : this.confirm_password
+                    }).then(function(responce){
+                        msg = responce.data
+                        if(responce.data == "email has been registered"){
+                            vm.tip_msg = "邮箱已被注册，请更换"
+                        }
+                        else if(responce.data == "different password input"){
+                            vm.tip_msg = "两次输入密码不一致，请重新输入"
+                            vm.password = ""
+                            vm.confirm_password = ""
+                        }
+                        else{
+                            vm.tip_msg = "注册成功,稍后跳转到登陆页面"
+                            vm.tip_color = "green"
+                            setTimeout(function(){ window.location.href = "../login"; }, 1000); 
+                            
+                        }
+                    }).catch(function(error){
+                    })
+                }
+            },
+            
+        })
+    </script>
 </body>
 </html>
 

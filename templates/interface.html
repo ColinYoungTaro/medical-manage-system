@@ -321,7 +321,7 @@
                 add_prescription(subject_id){
                     this.tmp_record.subject_id = parseInt(subject_id)
                     //不允许有空白的处方内容
-                    if(has_empty(this.tmp_record))return;
+                    if(this.has_empty(this.tmp_record))return;
                     const record = Object.assign({},this.tmp_record)
                     this.presc.push(record)
                 },
@@ -330,7 +330,7 @@
                     console.log(id)
                 },
                 post_presc(){
-                    axios.post('http://localhost:5000/add-presc', {
+                    axios.post('./add-presc', {
                         "data":this.presc
                     })
                     .then(function (response) {
@@ -340,6 +340,7 @@
                         
                     })
                     .catch(function (error) {
+                        alert("您没有修改权限")
                         console.log(error);
                     });
                     this.presc = []

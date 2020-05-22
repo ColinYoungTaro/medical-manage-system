@@ -16,7 +16,10 @@
             </div>
             <div style="width: 50%;display:flex;justify-content:flex-end;">
                 <a href="{{ url_for('main.doc_register') }}" class="d-flex w-50">
-                    <button class="btn btn-light  ml-3">注册</button>
+                    <button class="btn btn-light  ml-3" style="margin-right: 10px;;">注册</button>
+                </a>
+                <a href="{{ url_for('main.index') }}" class="d-flex w-50">
+                    <button class="btn btn-light  ml-3 ">返回</button>
                 </a>
             </div>
 
@@ -47,14 +50,12 @@
     
                 <div class="">
                     <div class="col-sm-offset-2 col-sm-10">
-                      {{ form.submit(class='btn btn-info btn-lg',value='登陆') }}
+                      {{ form.submit(class='btn btn-info btn-lg',value='登录') }}
                     </div>
                 </div>
             </div>
             </form>
-
         </div>
-
         
   
     {% endblock %}

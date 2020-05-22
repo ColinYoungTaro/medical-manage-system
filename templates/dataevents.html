@@ -15,9 +15,12 @@
     <div id="left-logo" class="w-50">
       <img src="../static/logo.png" alt="">
     </div>
-    <div class="w-50 d-flex flex-row-reverse" id="right-title">
-      <h3 style="color:white;font-weight: bold;" class="headline">检测后台</h3>
-    </div>
+    <div class="d-flex" style="flex-direction: column;">
+      <h3 style="color:white;font-weight: bold;" class="headline">检查后台</h3>
+      <ul class="nav w-100" style="flex-direction: row-reverse;">
+          <a href="{{ url_for('main.index')}}" style="color:white;font-size: 20px;">返回</a>
+      </ul>
+   </div>
   </nav>
   <div id="opt">
     <table class="table table-striped table-sm" style="height: 100%; overflow: auto;">
