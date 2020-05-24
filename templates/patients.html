@@ -67,7 +67,12 @@
             <td> {{ item.gender }}</td>
             <td>
               <button class="btn-sm btn btn-danger" @click="delete_patient('{{item.subject_id}}')">删除</button>
-              <a href="{{ url_for('main.patient_presc',subject_id = item.subject_id  ) }}"><button class="btn-sm btn btn-warning">处方药</button></a>
+              <a href="{{ url_for('main.patient_presc',subject_id = item.subject_id  ) }}">
+                <button class="btn-sm btn btn-info">处方药</button>
+              </a>
+              <a href="{{ url_for('main.data_events_detail',subject_id = item.subject_id  ) }}">
+                <button class="btn-sm btn btn-info">近期检测</button>
+              </a>
             </td>
           </tr>
         {% endfor %}

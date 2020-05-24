@@ -19,15 +19,20 @@ def add_prescription(kwargs):
     db.session.commit()
 
 # 删除处方药
-def delete_prescription(row_id):
-    if not current_user.can(Auth.DELETE) :
-        flash('没有删除权限')
-    prsc = data.Prescription.query.get(row_id)
-    if(prsc):
-        db.session.delete(prsc)
-        db.session.commit()
-    else:
-        print("Data not exist")
+@main.route('/delete-presc',methods=['GET','POST'])
+@login_required
+@permission_required(Auth.DELETE)
+def delete_prescription():
+    if request.method == 'POST':
+        datas = request.get_json()
+        row_id = datas['row_id']
+        prsc = data.Prescription.query.get(row_id)
+        if(prsc):
+            db.session.delete(prsc)
+            db.session.commit()
+        else:
+            abort(404)
+    return ""
 
 #删除病人函数
 def delete_patient(subject_id):
@@ -89,6 +94,8 @@ def login():
     return render_template('login2.html', form=login_form)
 
 
+
+
 # 后台管理界面，通过排序和限制来显示数据
 @main.route('/dataevents')
 @login_required
@@ -97,14 +104,27 @@ def data_events():
     events = data.LabEvent.query.order_by(db.desc(data.LabEvent.charttime)).limit(1000)
     return render_template('dataevents.html',events = events)
 
+# 查询单个病人的事件
+@main.route('/dataevents/<int:subject_id>')
+@login_required
+@permission_required(Auth.READ)
+def data_events_detail(subject_id):
+    events = data.LabEvent.query.filter_by(subject_id=subject_id).\
+        order_by(db.desc(data.LabEvent.charttime)).limit(1000)
+    return render_template('dataevents.html',events = events)
+
 # 后台管理界面，通过排序和限制来显示数据
+@main.route('/graph')
+@login_required
+def graph():
+    return render_template('charts.html')
 
 @main.route('/patient-prec/<int:subject_id>')
 @login_required
 @permission_required(Auth.UPDATE)
 def patient_presc(subject_id):
     presc = data.Prescription.query.filter_by(subject_id=subject_id).\
-        order_by(db.desc(data.Prescription.startdate)).limit(100)
+        order_by(db.desc(data.Prescription.row_id)).limit(100)
     return render_template('drug_info.html',presc = presc)
 
 # 注册页面
@@ -214,6 +234,22 @@ def index():
     html = render_template('index2.html',user=current_user)
     return html
 
+@main.route('/update-presc',methods=['GET','POST'])
+@login_required
+@permission_required(Auth.UPDATE)
+def update_presc():
+    if request.method == 'POST':
+        req = request.get_json()
+        row_id = req['row_id']
+        datas = req['data']
+        pres = data.Prescription.query.get(row_id)
+        if not pres:
+            abort(404)
+        for key,val in datas.items():
+            if val != '' and val is not None:
+                pres.__setattr__(key,val)
+        db.session.commit()
+    return ""
 
 def alter_prescription(row_id,attr_name,attr_val):
     pres= data.Prescription.query.get(row_id)
@@ -282,6 +318,52 @@ def query_prescription(subject_id):
         lst.append(dct)
     db.session.commit()
     return jsonify(lst)
+
+def statistic(lst,attribute):
+    res_dict = {}
+    for item in lst:
+        if item.__dict__[attribute] is None:
+            continue
+        if item.__dict__[attribute] in res_dict.keys():
+            res_dict[item.__dict__[attribute]] += 1
+        else:
+            res_dict[item.__dict__[attribute]] = 1
+    data_set = []
+    for key,value in res_dict.items():
+        data_set.append(dict(value=value,name=key))
+    return data_set
+
+@main.route('/get-admissions',methods=['GET','POST'])
+def get_admissions():
+    lst = data.Admission.query.all()
+    dict_set = {}
+    language_set = statistic(lst,'language')
+    type = statistic(lst,'admission_type')
+    religion = statistic(lst,'religion')
+    dict_set['language_pie'] = language_set
+    dict_set['type_pie'] = type
+    dict_set['religion_pie'] = religion
+    return jsonify(dict_set)
+
+@main.route('/patient-distribution',methods=['GET','POST'])
+def gender_distribution():
+    lst = get_all_subject_id()
+    male_cnt = 0
+    female_cnt = 0
+    for item in lst :
+        if item.gender == 'M':
+            male_cnt += 1
+        else :
+            female_cnt += 1
+
+    gender_pie = [
+        {"value" : male_cnt, "name" : "Male"},
+        {"value" : female_cnt,"name" : "Female"},
+    ]
+    data = {
+        "gender_pie" : gender_pie,
+    }
+    return jsonify(data)
 
 # 错误页面处理
 @main.errorhandler(404)

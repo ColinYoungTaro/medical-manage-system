@@ -18,7 +18,7 @@
     <div class="d-flex" style="flex-direction: column;">
       <h3 style="color:white;font-weight: bold;" class="headline">检查后台</h3>
       <ul class="nav w-100" style="flex-direction: row-reverse;">
-          <a href="{{ url_for('main.index')}}" style="color:white;font-size: 20px;">返回</a>
+          <a href="javascript:history.go(-1);" style="color:white;font-size: 20px;">返回</a>
       </ul>
    </div>
   </nav>
@@ -32,6 +32,7 @@
             <th>fluid</th>
             <th>result</th>
             <th>category</th>
+            <th>检查结果</th>
         </tr>
       </thead>
         {% for item in events %}
@@ -41,7 +42,14 @@
             <td> {{ item.d_labs.label }}       </td>
             <td> {{ item.d_labs.fluid}}</td>
             <td> {{ item.valuenum }} {{ item.valueuom }}</td>
-            <td> {{ item.d_labs.category}}</td>
+            <td> {{ item.d_labs.category }}</td>
+            
+            {% if item.flag == 'abnormal' %}
+              <td><span style="color:red;font-weight: bold;">异常</span></td>
+            {% else %}
+              <td>正常</td>
+            {% endif %}
+              
         </tr>
         {% endfor %}
     </table>

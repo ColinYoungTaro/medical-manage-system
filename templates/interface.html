@@ -92,6 +92,7 @@
                                     <th>distchtime</th>
                                     <th>type</th>
                                     <th>gender</th>
+                                    <th>is dead</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -99,6 +100,15 @@
                                     <td>{{ admission.admittime }}</td>
                                     <td>{{ admission.admission_type }}</td>
                                     <td>{{ select.gender }}</td>
+                                    <td>
+                                        {% if select.dod %}
+                                            true
+                                        {% else %}
+                                            false
+                                        {% endif %}
+                                    </td>
+
+                                        
                                 </tr>
                             </tbody>
                         </table>
@@ -114,6 +124,7 @@
                                 <div v-if="print_abnormal_only">查看全部指标</div>
                                 <div v-else>查看异常指标</div>
                             </button>
+                            
                         </div>
                     </nav>
                     <div style="height:200px;overflow: auto;">
@@ -180,7 +191,7 @@
                             <tbody>
                                 <tr v-for="(i, index) in presc" :key="index">
                                     <td>${i.drug}</td>
-                                    <td>${i.val_rx}</td>
+                                    <td>${i.dose_val_rx} ${i.form_unit_disp}</td>
                                     <td>${i.startdate}</td>
                                     <td>${i.enddate}</td>
                                     <td>${i.route}</td>
@@ -244,7 +255,7 @@
                                     <span class="input-group-text" id="my-addon">用量</span>
                                 </div>
                                 <input v-model="tmp_record.dose_val_rx" class="form-control typeahea__query mr-2" type="text" name="" placeholder="用量">
-                                <input v-model="tmp_record.dose_unit_rx" class="form-control typeahea__query mr-2" type="text" name="" placeholder="单位">
+                                <input v-model="tmp_record.form_unit_disp" class="form-control typeahea__query mr-2" type="text" name="" placeholder="单位">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text" id="my-addon">route</span>
                                 </div>
@@ -277,7 +288,7 @@
                         enddate:null,
                         route:null,
                         dose_val_rx : null,
-                        dose_unit_rx : null
+                        form_unit_disp : null
                     },
                     search_content:"",
                     presc_valid:false,
@@ -295,6 +306,7 @@
                 
             },
             mounted() {
+                
                 axios
                 .get('../get-pres/37')
                 .then(response => (this.prescriptions = response.data))
@@ -330,7 +342,7 @@
                     console.log(id)
                 },
                 post_presc(){
-                    axios.post('./add-presc', {
+                    axios.post('../add-presc', {
                         "data":this.presc
                     })
                     .then(function (response) {
