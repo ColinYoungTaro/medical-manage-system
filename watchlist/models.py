@@ -41,7 +41,6 @@ class Patient(db.Model):
     labs = db.relationship('LabEvent',backref='patient',cascade='all, delete-orphan')
     events = db.relationship('DataTimeEvent',backref='patient',cascade='all, delete-orphan')
     prescriptions = db.relationship('Prescription',backref='patient',cascade='all, delete-orphan')
-
     def __repr__(self):
         return "ID:<%r>" % self.subject_id
 

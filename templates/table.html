@@ -1,0 +1,68 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="zh-cn">
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title></title>
+<script language="javascript">
+function DoHide()
+{
+// 获得id为table1的表格，并判断它的style.display值是否等于 'block '
+// 等于就执行 if 部分代码，不等于就执行 else 部分代码
+if(document.getElementById("table1").style.display=='block')
+{
+// 把 id 为 table1的元素的设置为隐藏
+document.getElementById("table1").style.display='none';
+
+// 把按钮（id 为 B3 ）的文字设置成 '显示表格'
+document.getElementById("B3").value="显示表格";
+
+}
+else
+{
+// 把 id 为 table1的元素的设置为显示
+document.getElementById("table1").style.display='block';
+
+// 把按钮（id 为 B3 ）的文字设置成 '隐藏表格'
+document.getElementById("B3").value="隐藏表格";
+}
+
+}
+function hide(){
+    row = document.getElementById("trtr")
+    row.style.display = "none";
+
+}
+</script>
+</head>
+
+<body>
+
+<p><input type="button" value="隐藏表格" name="B3" onclick="hide();"></p>
+<table  width="100%" id="table1" style="display:block">
+<tr id="trtr">
+<td>这是一个表格</td>
+<td>单元格2</td>
+<td>单元格3</td>
+<td>单元格4</td>
+<td>单元格5</td>
+</tr>
+<tr>
+<td>1</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+<td>5</td>
+</tr>
+<tr>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+</tr>
+</table>
+
+</body>
+
+</html>

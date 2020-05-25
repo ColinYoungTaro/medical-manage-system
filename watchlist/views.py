@@ -35,7 +35,7 @@ def delete_prescription():
     return ""
 
 #删除病人函数
-def delete_patient(subject_id):
+def del_patient(subject_id):
     record = data.Patient.query.get(subject_id)
     if(record):
         db.session.delete(record)
@@ -161,7 +161,7 @@ def delete_patient():
             msg = ['成功删除病人','success']
             print("Execute")
             data = request.get_json()
-            delete_patient(data['data'])
+            del_patient(data['data'])
         else:
             msg = ['删除失败','danger']
             print("FAIL")
@@ -170,8 +170,14 @@ def delete_patient():
 #
 @main.route('/back-end-patients',methods=['POST','GET'])
 def be_patients():
-    msg = []
-    return render_template('patients.html',patients=get_all_subject_id())
+    option_dict = {}
+    option_dict['languages'] = [x[0] for x in data.Admission.query.with_entities(data.Admission.language).distinct().all()]
+    option_dict['insurance'] = [x[0] for x in data.Admission.query.with_entities(data.Admission.insurance).distinct().all()]
+    option_dict['religion'] = [x[0] for x in data.Admission.query.with_entities(data.Admission.religion).distinct().all()]
+    set = data.Admission.query.all()
+    return render_template('patients.html',patients=set,dicts=option_dict)
+
+
 @main.route('/get-auth')
 def get_auth():
     return current_user.can()
