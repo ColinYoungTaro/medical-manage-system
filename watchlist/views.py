@@ -138,11 +138,11 @@ def doc_register():
         confirm_pwd = info['conform_password']
         print(email,name,pwd,confirm_pwd,"ABORT")
         if pwd != confirm_pwd:
-            abort(500,Response('different password input'))
+            abort(Response('different password input'))
         else:
             res = User.query.filter_by(Email=email).first()
             if (res):
-                abort(500,Response('email has been registered'))
+                abort(Response('email has been registered'))
 
         user = User(Email=email, name=name,role_id=14)
         user.password = pwd
@@ -287,7 +287,6 @@ def user_list():
     if request.method == 'POST':
         if not current_user.can(Auth.ADMIN):
             abort(500)
-
         json_data = request.get_json()
         if json_data['func'] == 'alter':
             role_name = json_data['data']

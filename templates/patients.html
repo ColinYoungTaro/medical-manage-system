@@ -85,7 +85,7 @@
 
     <div v-cloak v-if="is_tip" class="alert fixed-top alert-warning alert-dismissable fade show" style="z-index: 99999;">
       ${tip_msg}
-      <button type="button" class="close" data-dismiss="alert" @click='clear'>&times;</button>
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
     </div>
     <table id="adm" class="table table-striped table-sm mt-3" style="height: 100%; overflow: auto;">
       <thead>
@@ -140,7 +140,6 @@
           var rows = tb.rows;                           // 获取表格所有行
           for(var i = 1; i<rows.length; i++ ){  // 遍历该行的 td 忽略thead
             var tmp_record = {}
-            // console.log("第"+(i+1)+"行，第"+(j+1)+"个td的值："+rows[i].cells[j].innerHTML+"。");           // 输出每个td的内容
             tmp_record['id'] = rows[i].cells[4].innerHTML.replace(/\s+/g,"");
             tmp_record['religion'] = rows[i].cells[1].innerHTML.replace(/\s+/g,"");
             tmp_record['insurance'] = rows[i].cells[2].innerHTML.replace(/\s+/g,"");
