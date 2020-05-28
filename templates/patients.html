@@ -36,7 +36,7 @@
       </div>
       <div class="bg-window d-flex m-2 w-100">
         <div style="width: 300px; margin-top: 10px;" class="w-25" id="right-title">
-          <span style="color:white;font-weight: bold;" v-cloak >筛选病人</span>
+          <span style="color:white;font-weight: bold;">筛选病人</span>
         </div>
 
         <div id="app" style="display: flex; flex-direction: row; justify-content: flex-end;">
@@ -112,6 +112,9 @@
               </a>
               <a href="{{ url_for('main.data_events_detail',subject_id = item.subject_id  ) }}">
                 <button class="btn-sm btn btn-info">近期检测</button>
+              </a>
+              <a href="{{ url_for('main.check_result',subject_id = item.subject_id  ) }}">
+                <button class="btn-sm btn btn-info">详情</button>
               </a>
             </td>
           </tr>

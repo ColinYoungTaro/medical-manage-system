@@ -76,7 +76,7 @@
                         <a href="{{ url_for('main.logout')}}" style="color:black">登出</a>
                     </button>
                     <button class="btn btn-light btn-sm ml-1">
-                        <a href="{{ url_for('main.index')}}" style="color:black">返回</a>
+                        <a href="javascript:history.go(-1);" style="color:black">返回</a>
                     </button>
                 </nav>
                 <div id="info">
@@ -97,8 +97,8 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>{{ admission.admittime }}</td>
-                                    <td>{{ admission.admission_type }}</td>
+                                    <td>{{ select.admissions.admittime }}</td>
+                                    <td>{{ select.admissions.admission_type }}</td>
                                     <td>{{ select.gender }}</td>
                                     <td>
                                         {% if select.dod %}
@@ -107,8 +107,6 @@
                                             false
                                         {% endif %}
                                     </td>
-
-                                        
                                 </tr>
                             </tbody>
                         </table>
@@ -120,6 +118,13 @@
                             <h7 style="color:white;">检查指标</h7>
                         </div>
                         <div style="width:50%;display: flex; justify-content:flex-end;">
+                            <select class="selectpicker ml-1 mr-1" data-live-search="true" v-model="select_key">
+                                {% for item in lab_cats %}
+                                    <option id="'{{item}}'"> {{ item }} </option>
+                                {% endfor %}
+                            </select>
+                            <input type="button" class="btn btn-sm btn-light mr-1 ml-1" value="筛选" @click="select_mode = true">
+                            <input type="button" class="btn btn-sm btn-light mr-1 ml-1" value="显示全部" @click="select_mode=false">
                             <button class="btn btn-light btn-sm  mr-1 ml-1" @click="print_abnormal_only = !print_abnormal_only">
                                 <div v-if="print_abnormal_only">查看全部指标</div>
                                 <div v-else>查看异常指标</div>
@@ -135,21 +140,24 @@
                                     <th>valueomn</th>
                                     <th>is abnormal</th>
                                     <th>charttime</th>
+                                    <th>type</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for content in select.labs %}
-                                    <tr v-show=" (!print_abnormal_only) || '{{content.flag}}' == 'abnormal' ">
+                                    <tr v-show="(!select_mode || select_key.trim() == '{{content.d_labs.label}}'.trim() ) && ((!print_abnormal_only) || '{{content.flag}}' == 'abnormal')">
                                         {% if not content.dod %}
                                             <td>{{ content.d_labs.label}}</td>
                                             <td>{{ content.valuenum }}</td>
                                             <td>{{ content.valueuom }}</td>
+                                            
                                             <td v-if="'{{content.flag}}' == 'abnormal'">
                                                 <span style="color:red;">
                                                     {{ content.flag }}
                                                 </span></td>
                                             <td v-else>{{ content.flag }}</td>
                                             <td>{{ content.charttime }}</td> 
+                                            <td>{{ content.d_labs.category }}</td>
                                         {% endif %}
                                     </tr>
                                 {% endfor %}
@@ -230,11 +238,10 @@
                             <div class="input-group mr-5 p-1">
                                 <div class="form-inline">
                                     选择药物
-                                    <select class="selectpicker ml-2" data-live-search="true" v-model="tmp_record.drug">
+                                    <select class="selectpicker ml-1 mr-1" data-live-search="true" v-model="tmp_record.drug">
                                         {% for item in drug_name_list %}
                                             <option id="'{{item}}'"> {{ item }} </option>
                                         {% endfor %}
-                                            
                                     </select>
                                 </div>
 
@@ -289,6 +296,8 @@
                         dose_val_rx : null,
                         form_unit_disp : null
                     },
+                    select_mode : false,
+                    select_key : "",
                     search_content:"",
                     presc_valid:false,
                     print_abnormal_only:false,
@@ -340,6 +349,10 @@
                     this.presc.splice(id,1)
                     console.log(id)
                 },
+                select(){
+                    this.select_mode = ! this.select_mode;
+                },
+                
                 post_presc(){
                     axios.post('../add-presc', {
                         "data":this.presc
@@ -358,7 +371,6 @@
                 },
             },
         })
-
     </script>
 </body>
 </html>

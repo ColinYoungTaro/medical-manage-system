@@ -193,11 +193,11 @@ def main_interface():
 @permission_required(Auth.READ)
 def check_result(subject_id):
     ls = get_all_subject_id()
-    admission = data.Admission.query.filter_by(subject_id=subject_id).first_or_404()
     patient = data.Patient.query.filter_by(subject_id=subject_id).first_or_404()
     drug_name_list = get_all_drug()
+    label_list = [item.d_labs.label for item in patient.labs]
     return render_template('interface.html', select=patient, patients=ls, \
-            admission=admission,user = current_user,drug_name_list = drug_name_list)
+            lab_cats = label_list,user=current_user,drug_name_list=drug_name_list)
 
 
 @main.route('/get-all-patients-number')

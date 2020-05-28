@@ -41,6 +41,7 @@ class Patient(db.Model):
     labs = db.relationship('LabEvent',backref='patient',cascade='all, delete-orphan')
     events = db.relationship('DataTimeEvent',backref='patient',cascade='all, delete-orphan')
     prescriptions = db.relationship('Prescription',backref='patient',cascade='all, delete-orphan')
+    admissions = db.relationship('Admission',backref='patient')
     def __repr__(self):
         return "ID:<%r>" % self.subject_id
 
@@ -48,7 +49,7 @@ class Patient(db.Model):
 class Admission(db.Model):
     __tablename__ = 'admissions'
     row_id = db.Column(db.Integer,primary_key=True)
-    subject_id = db.Column(db.Integer)
+    subject_id = db.Column(db.Integer,db.ForeignKey('patients.subject_id'))
     hadm_id = db.Column(db.Integer)
     admittime = db.Column(db.DateTime)
     dischtime = db.Column(db.DateTime)
