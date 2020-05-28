@@ -76,38 +76,50 @@
                         <a href="{{ url_for('main.logout')}}" style="color:black">登出</a>
                     </button>
                     <button class="btn btn-light btn-sm ml-1">
-                        <a href="javascript:history.go(-1);" style="color:black">返回</a>
+                        <a href="{{ url_for('main.index') }}" style="color:black">返回</a>
                     </button>
                 </nav>
                 <div id="info">
                     <nav class="navbar bg-info navbar-dark navbar-expand-sm">
                         <div style="width: 50%;">
-                            <h7 style="color:white;">病人信息</h7>
+                            <h7 style="color:white;">病人信息和挂号记录</h7>
                         </div>
                     </nav>
                     <div>
                         <table class="table table-sm table-striped">
                             <thead>
                                 <tr>
-                                    <th>distchtime</th>
-                                    <th>type</th>
-                                    <th>gender</th>
-                                    <th>is dead</th>
+                                    <th>Gender:</th>
+                                    <th>subject_id</th>
+                                    <th></th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>{{ select.admissions.admittime }}</td>
-                                    <td>{{ select.admissions.admission_type }}</td>
-                                    <td>{{ select.gender }}</td>
-                                    <td>
-                                        {% if select.dod %}
-                                            true
-                                        {% else %}
-                                            false
-                                        {% endif %}
-                                    </td>
+                                    <td>{{select.gender}}</td>
+                                    <td>{{select.subject_id}}</td>
                                 </tr>
+                            </tbody>
+                        </table class="table table-sm table-striped">
+                        <table class="table table-sm table-striped">
+                            <thead>
+                                <tr>
+                                    <th>language</th>
+                                    <th>type</th>
+                                    <th>religion</th>
+                                    <th>admission_location</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in select.admissions %}
+                                     <tr>
+                                        <td>{{ item.language}}</td>
+                                        <td>{{ item.admission_type }}</td>
+                                        <td>{{ item.religion }}</td>
+                                        <td>{{ item.admission_location }}</td>
+                                     </tr>   
+                                {% endfor %}
                             </tbody>
                         </table>
                     </div>
@@ -123,15 +135,14 @@
                                     <option id="'{{item}}'"> {{ item }} </option>
                                 {% endfor %}
                             </select>
-                            <input type="button" class="btn btn-sm btn-light mr-1 ml-1" value="筛选" @click="select_mode = true">
-                            <input type="button" class="btn btn-sm btn-light mr-1 ml-1" value="显示全部" @click="select_mode=false">
+                            <input type="button" class="btn btn-sm btn-light mr-1 ml-1" :value="select_mode?'取消筛选':'筛选'" @click="select_mode = !select_mode">
                             <button class="btn btn-light btn-sm  mr-1 ml-1" @click="print_abnormal_only = !print_abnormal_only">
                                 <div v-if="print_abnormal_only">查看全部指标</div>
                                 <div v-else>查看异常指标</div>
                             </button>
                         </div>
                     </nav>
-                    <div style="height:200px;overflow: auto;">
+                    <div style="height:170px;overflow: auto;">
                         <table class="table table-bordered table-sm table-striped table-condensed">
                             <thead>
                                 <tr>
