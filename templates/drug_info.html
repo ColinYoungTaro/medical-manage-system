@@ -50,8 +50,8 @@
                     <tr>
                         <td>{{ item.subject_id }}</td>
                         <td>{{ item.drug }}</td>
-                        <td>{{ item.startdate }} </td>
-                        <td>{{ item.enddate }}</td>
+                        <td id="{{item.row_id}}_sd">{{ item.startdate }} </td>
+                        <td id="{{item.row_id}}_ed">{{ item.enddate }}</td>
                         <td>{{ item.route }}</td>
                         <td id="{{item.row_id}}_val">{{ item.dose_val_rx}}</td>
                         <td>{{ item.form_unit_disp }}</td>
@@ -74,7 +74,11 @@
         data:{
             selected_id :0,
             edit_mode : false ,
-            tmp_data : ""
+            tmp_data : {
+                sd:"",
+                ed:"",
+                val:""
+            }
         },
         methods: {
             shift_mode(id) {
@@ -86,10 +90,14 @@
             },
             alter(row_id){
                 datas = {
-                    'dose_val_rx':""
+                    'dose_val_rx':"",
+                    'start_time':"",
+                    'end_time':""
                 }
                 _id = row_id + '_val'
-                datas.dose_val_rx = document.getElementById(_id).innerHTML;
+                datas.dose_val_rx = parseInt(document.getElementById(_id).innerHTML);
+                datas.startdate = document.getElementById(row_id+'_sd').innerHTML
+                datas.enddate = document.getElementById(row_id+'_ed').innerHTML
                 console.log(datas)
                 if(confirm("确定要修改吗？")){
                     axios.post('../update-presc', {
@@ -112,16 +120,22 @@
             update(row_id){
                 _id = row_id + '_val'
                 if(this.edit_mode == false){
-                    this.tmp_data = document.getElementById(_id).innerHTML;
+                    this.tmp_data.val = document.getElementById(_id).innerHTML;
+                    this.tmp_data.sd = document.getElementById(row_id+'_sd').innerHTML;
+                    this.tmp_data.ed = document.getElementById(row_id+'_ed').innerHTML;
                 }
                 else{
-                    document.getElementById(_id).innerHTML = this.tmp_data;
+                    document.getElementById(_id).innerHTML = parseInt(this.tmp_data.val);
+                    document.getElementById(row_id+'_ed').innerHTML = this.tmp_data.ed;
+                    document.getElementById(row_id+'_sd').innerHTML = this.tmp_data.sd;
                 }
                 this.edit_mode = ! this.edit_mode
                 if(this.edit_mode)
                     this.selected_id = parseInt(row_id);
                 document.getElementById(_id).contentEditable = this.edit_mode;
-                console.log(_id)
+                document.getElementById(row_id+'_ed').contentEditable = this.edit_mode;
+                document.getElementById(row_id+'_sd').contentEditable = this.edit_mode;
+                console.log(row_id)
             },
             del(row_id){
                 if(confirm("确定要删除吗？")){

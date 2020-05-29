@@ -76,7 +76,10 @@
                         <a href="{{ url_for('main.logout')}}" style="color:black">登出</a>
                     </button>
                     <button class="btn btn-light btn-sm ml-1">
-                        <a href="{{ url_for('main.index') }}" style="color:black">返回</a>
+                        <a href="{{ url_for('main.index') }}" style="color:black">主页</a>
+                    </button>
+                    <button class="btn btn-light btn-sm ml-1">
+                        <a href="javascript:history.go(-1);" style="color:black">返回</a>
                     </button>
                 </nav>
                 <div id="info">
@@ -164,9 +167,9 @@
                                             
                                             <td v-if="'{{content.flag}}' == 'abnormal'">
                                                 <span style="color:red;">
-                                                    {{ content.flag }}
+                                                    异常
                                                 </span></td>
-                                            <td v-else>{{ content.flag }}</td>
+                                            <td v-else>正常</td>
                                             <td>{{ content.charttime }}</td> 
                                             <td>{{ content.d_labs.category }}</td>
                                         {% endif %}
