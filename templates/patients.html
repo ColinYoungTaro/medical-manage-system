@@ -36,7 +36,7 @@
       </div>
       <div class="bg-window d-flex m-2 w-100">
         <div style="width: 300px; margin-top: 10px;" class="w-25" id="right-title">
-          <span style="color:white;font-weight: bold;">筛选病人{{len}}</span>
+          <span style="color:white;font-weight: bold;">筛选病人</span>
         </div>
 
         <div id="app" style="display: flex; flex-direction: row; justify-content: flex-end;">
@@ -127,15 +127,15 @@
   style="height: 8%; justify-content: center;">
     <ul class="pagination pagination-sm ">
       
-      {% if index != 0 %}
-        <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+      {% if index > 0 %}
+        <li class="page-item"><a class="page-link" href="{{ url_for('main.be_patients',index = index-1) }}">Previous</a></li>
       {% endif %} 
       {% for i in range(len) %}
         <li class="page-item"><a class="page-link" href="{{ url_for('main.be_patients',index = i) }}">{{i+1}}</a></li>  
       {% endfor %}
       
-      {% if index != len-1 %}
-        <li class="page-item"><a class="page-link" href="#">Next</a></li> 
+      {% if index < len-1 %}
+        <li class="page-item"><a class="page-link" href="{{url_for('main.be_patients',index = index+1)}}">Next</a></li> 
       {% endif %}
       
     </ul>
