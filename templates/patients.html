@@ -168,20 +168,23 @@
       },
       methods: {
         delete_patient(subject_id){
-          id = parseInt(subject_id)         
-          axios.post('../delete-patient', {
+          id = parseInt(subject_id)  
+          if(confirm("确定要删除吗")){
+            axios.post('../delete-patient', {
               "data":id
-          })
-          .then(function (response) {
-              console.log("succ")
-              console.log(response);
-              vm.tip('删除成功','success')
-              location.reload()
-          })
-          .catch(function (error) {
-              console.log(error);
-              vm.tip('没有删除权限','danger')
-          });
+            })
+            .then(function (response) {
+                console.log("succ")
+                console.log(response);
+                vm.tip('删除成功','success')
+                location.reload()
+            })
+            .catch(function (error) {
+                console.log(error);
+                vm.tip('没有删除权限','danger')
+            });
+          }     
+
         },
         tip(str,cat){
           this.is_tip = true
@@ -201,16 +204,18 @@
           }
         },
         query(){
-          this.clear()
+          //this.clear()
           for(let iter = 0 ; iter < this.table_data.length;iter++){
             let item = this.table_data[iter]
             row = document.getElementById(item['id'])
-            if(item[this.select_option] != this.select_value){
-              row.style.display="none"
-            }
-            else{
-              row.style.display="table-row"
-              console.log(item['id'],item[this.select_option])
+            if(row.style.display != "none"){
+              if(item[this.select_option] != this.select_value){
+                row.style.display="none"
+              }
+              else{
+                row.style.display="table-row"
+                console.log(item['id'],item[this.select_option])
+              }
             }
           }
           this.tip("查询完成",'success')

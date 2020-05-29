@@ -91,29 +91,33 @@
                 console.log(role_id,user_id)
                 if(role_id == undefined || role_id == '' || role_id == null)
                     return 
-                axios.post('./user-list',{
-                    "func" : "alter",
-                    "data" : role_id ,
-                    "alter_user_id" : user_id
-                }).then(function(response){
-                    location.reload()
-                }).catch(function(error){
-                    console.error(error)
-                    alert("权限不足")
-                })
+                if(confirm("确定进行修改权限吗？")){
+                    axios.post('./user-list',{
+                        "func" : "alter",
+                        "data" : role_id ,
+                        "alter_user_id" : user_id
+                    }).then(function(response){
+                        location.reload()
+                    }).catch(function(error){
+                        console.error(error)
+                        alert("权限不足")
+                    })
+                }
             },
             delete_user(id){
                 var user_id = parseInt(id)
-                console.log(user_id)
-                axios.post('./user-list',{
-                    "func" : "delete",
-                    "user_id" : user_id
-                }).then(function(response){
-                    location.reload()
-                }).catch(function(error){
-                    console.error(error)
-                    alert("权限不足")
-                })
+                if(confirm("确定将其炒鱿鱼吗？")){
+                    console.log(user_id)
+                    axios.post('./user-list',{
+                        "func" : "delete",
+                        "user_id" : user_id
+                    }).then(function(response){
+                        location.reload()
+                    }).catch(function(error){
+                        console.error(error)
+                        alert("权限不足")
+                    })
+                }
             }
         },
         delimiters:['${','}']

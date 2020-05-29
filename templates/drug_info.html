@@ -95,7 +95,7 @@
                     'end_time':""
                 }
                 _id = row_id + '_val'
-                datas.dose_val_rx = parseInt(document.getElementById(_id).innerHTML);
+                datas.dose_val_rx = Number(document.getElementById(_id).innerHTML);
                 datas.startdate = document.getElementById(row_id+'_sd').innerHTML
                 datas.enddate = document.getElementById(row_id+'_ed').innerHTML
                 console.log(datas)
@@ -125,7 +125,7 @@
                     this.tmp_data.ed = document.getElementById(row_id+'_ed').innerHTML;
                 }
                 else{
-                    document.getElementById(_id).innerHTML = parseInt(this.tmp_data.val);
+                    document.getElementById(_id).innerHTML = Number(this.tmp_data.val);
                     document.getElementById(row_id+'_ed').innerHTML = this.tmp_data.ed;
                     document.getElementById(row_id+'_sd').innerHTML = this.tmp_data.sd;
                 }
