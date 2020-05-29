@@ -174,7 +174,7 @@ def be_patients():
     option_dict['languages'] = [x[0] for x in data.Admission.query.with_entities(data.Admission.language).distinct().all()]
     option_dict['insurance'] = [x[0] for x in data.Admission.query.with_entities(data.Admission.insurance).distinct().all()]
     option_dict['religion'] = [x[0] for x in data.Admission.query.with_entities(data.Admission.religion).distinct().all()]
-    set = data.Admission.query.all()
+    set = get_all_subject_id()
     return render_template('patients.html',patients=set,dicts=option_dict)
 
 

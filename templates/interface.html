@@ -341,7 +341,8 @@
             },
             methods: {
                 has_empty(record){
-                    for(let iter in record){
+                    for(let index in record){
+                        iter = record[index]
                         if(iter == null || iter == undefined || iter == ''){
                             return true 
                         }
@@ -350,9 +351,13 @@
                 },
                 search_patients(){},
                 add_prescription(subject_id){
+
                     this.tmp_record.subject_id = parseInt(subject_id)
                     //不允许有空白的处方内容
-                    if(this.has_empty(this.tmp_record))return;
+                    if(this.has_empty(this.tmp_record)){
+                        console.log(this.tmp_record)
+                        return ;
+                    }
                     const record = Object.assign({},this.tmp_record)
                     this.presc.push(record)
                 },

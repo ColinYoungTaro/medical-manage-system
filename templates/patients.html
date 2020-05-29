@@ -100,10 +100,10 @@
       <tbody>
         {% for item in patients %}
           <tr id = '{{item.row_id}}'>
-            <td> {{ item.subject_id }}</td>
-            <td> {{ item.religion }}</td>
-            <td> {{ item.insurance }}</td>
-            <td> {{ item.language }}</td>
+            <td> {{ item.admissions[0].subject_id }}</td>
+            <td> {{ item.admissions[0].religion }}</td>
+            <td> {{ item.admissions[0].insurance }}</td>
+            <td> {{ item.admissions[0].language }}</td>
             <td style="display: none;"> {{ item.row_id }}</td>
             <td>
               <button class="btn-sm btn btn-danger" @click="delete_patient('{{item.subject_id}}')">删除</button>

@@ -55,8 +55,8 @@
                         <td>{{ item.route }}</td>
                         <td id="{{item.row_id}}_val">{{ item.dose_val_rx}}</td>
                         <td>{{ item.form_unit_disp }}</td>
-                        <td>
-                            <input v-if= "edit_mode" type = "button" class = "btn-sm btn btn-primary m-1" @click="alter('{{ item.row_id }}')" value="确认提交">
+                        <td class="d-flex" style="justify-content: flex-end;">
+                            <input v-show = "edit_mode && selected_id == parseInt('{{item.row_id}}')" type = "button" class = "btn-sm btn btn-primary m-1" @click="alter('{{ item.row_id }}')" value="确认提交">
                             <input type = "button" class = "btn-sm btn btn-info m-1" @click="update('{{ item.row_id }}')" :value="edit_mode==true?'取消':'修改'">
                             <input type = "button" class="btn-sm btn btn-danger m-1" @click="del('{{item.row_id}}')" value="删除">
                         </td>
@@ -72,12 +72,17 @@
     var vm = new Vue({
         el: "#app",
         data:{
+            selected_id :0,
             edit_mode : false ,
             tmp_data : ""
         },
         methods: {
-            shift_mode() {
+            shift_mode(id) {
+                var _id = parseInt(id);
                 this.edit_mode = ! this.edit_mode
+                if(this.edit_mode){
+                    this.selected_id = _id;
+                }
             },
             alter(row_id){
                 datas = {
@@ -100,6 +105,7 @@
                 .catch(function (error) {
                     alert("您没有修改权限")
                     console.log(error);
+                    location.reload()
                 });
                 }
             },
@@ -111,7 +117,9 @@
                 else{
                     document.getElementById(_id).innerHTML = this.tmp_data;
                 }
-                this.shift_mode()
+                this.edit_mode = ! this.edit_mode
+                if(this.edit_mode)
+                    this.selected_id = parseInt(row_id);
                 document.getElementById(_id).contentEditable = this.edit_mode;
                 console.log(_id)
             },
@@ -129,6 +137,7 @@
                 .catch(function (error) {
                     alert("您没有修改权限")
                     console.log(error);
+                    location.reload();
                 });
                 }
             }

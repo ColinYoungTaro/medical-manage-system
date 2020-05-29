@@ -201,7 +201,6 @@ class User(db.Model,UserMixin):
     Email = db.Column(db.String(50))
     permission = db.Column(db.Integer)
     role_id = db.Column(db.Integer,db.ForeignKey('roles.id'))
-    pwd = db.Column(db.String(50))
     name = db.Column(db.String(30))
     password_hash = db.Column(db.String(128))
 
@@ -214,7 +213,6 @@ class User(db.Model,UserMixin):
         raise AttributeError('Not readable')
     @password.setter
     def password(self,password):
-        self.pwd = password
         self.password_hash = generate_password_hash(password)
 
     def verify_password(self,password):
