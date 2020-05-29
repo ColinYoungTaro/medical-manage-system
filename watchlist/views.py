@@ -168,14 +168,16 @@ def delete_patient():
     return ""
 
 #
-@main.route('/back-end-patients',methods=['POST','GET'])
-def be_patients():
+@main.route('/back-end-patients/<int:index>',methods=['POST','GET'])
+def be_patients(index):
     option_dict = {}
-    option_dict['languages'] = [x[0] for x in data.Admission.query.with_entities(data.Admission.language).distinct().all()]
-    option_dict['insurance'] = [x[0] for x in data.Admission.query.with_entities(data.Admission.insurance).distinct().all()]
-    option_dict['religion'] = [x[0] for x in data.Admission.query.with_entities(data.Admission.religion).distinct().all()]
-    set = get_all_subject_id()
-    return render_template('patients.html',patients=set,dicts=option_dict)
+    limit_size = 300
+    length = len(data.Patient.query.all())
+    option_dict['languages'] = [x[0] for x in data.Admission.query.with_entities(data.Admission.language).offset(index*1000).limit(1000).distinct()]
+    option_dict['insurance'] = [x[0] for x in data.Admission.query.with_entities(data.Admission.insurance).offset(index*1000).limit(1000).distinct()]
+    option_dict['religion'] = [x[0] for x in data.Admission.query.with_entities(data.Admission.religion).offset(index*1000).limit(1000).distinct()]
+    set = data.Patient.query.offset(index*limit_size).limit(limit_size)
+    return render_template('patients.html',patients=set,dicts=option_dict,len=int(length/limit_size)+1,index=index)
 
 
 @main.route('/get-auth')
