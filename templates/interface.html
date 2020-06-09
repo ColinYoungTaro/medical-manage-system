@@ -186,9 +186,18 @@
                             <h7 style="color:white;">处方</h7>
                         </div>
                         <div style="width:50%;display: flex; justify-content:flex-end;">
+                            
+                            {% if user.can(4) %}
                             <button class="btn btn-light btn-sm  mr-1 ml-1" data-toggle="modal" data-target="#myModal">
                                 插入新处方
                             </button>
+                            {% else %}
+                            <button class="btn btn-light btn-sm  mr-1 ml-1" disabled="disabled" data-toggle="modal" data-target="#myModal">
+                                插入新处方
+                            </button>
+                            {% endif %}
+                                
+         
                             <button @click="post_presc"class="btn btn-primary btn-sm  mr-1 ml-1">
                                 提交处方
                             </button>
